@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  background-color: #193948;
+}
+
+#tGlass {
+  background-color: #0B2936;
+  height: 100vh;
+  width: 50vh;
+  margin: auto;
+  position: relative;
+}
+
+.block {
+  background-color: #124C64;
+  width: 5vh;
+  height: 5vh;
+  position: absolute;
+}
