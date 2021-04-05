@@ -1,5 +1,43 @@
+const shapes = {
+  T: [
+    [0, 0, 0],
+    [1, 1, 1],
+    [0, 1, 0],
+  ],
+  S: [
+    [0, 0, 0],
+    [0, 1, 1],
+    [1, 1, 0],
+  ],
+  Z: [
+    [0, 0, 0],
+    [1, 1, 0],
+    [0, 1, 1],
+  ],
+  L: [
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 1, 1],
+  ],
+  Г: [
+    [0, 1, 1],
+    [0, 1, 0],
+    [0, 1, 0],
+  ],
+  Sq: [
+    [1, 1],
+    [1, 1],
+  ],
+  Line: [
+    [0, 1, 0, 0],
+    [0, 1, 0, 0],
+    [0, 1, 0, 0],
+    [0, 1, 0, 0],
+  ],
+}
+
 const gs = {
-  alive: [[1]],
+  alive: getRandomShape(),
   pos: {x: 0, y: 0},
   inert: eval(`[${`[${'0,'.repeat(10)}],`.repeat(20)}]`)
 }
@@ -26,7 +64,7 @@ function tick() {
       ...eval(`[${`[${'0,'.repeat(10)}],`.repeat(20 - inert.length)}]`),
       ...inert
     ]
-    gs.alive = [[1]]
+    gs.alive = getRandomShape()
     gs.pos = {x: 0, y: 0}
   }
   render()
@@ -56,6 +94,12 @@ function render() {
 function buildBlock({x, y}) {
   const left = x*5,  top = y*5
   return `<div class="block" style="left: ${left}vh; top: ${top}vh"></div>`
+}
+
+function getRandomShape() {
+  const shapesArr = Object.values(shapes)
+  const i = Math.floor(Math.random() * shapesArr.length)
+  return shapesArr[i]
 }
 
 const shifts = {
