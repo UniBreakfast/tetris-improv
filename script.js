@@ -1,34 +1,34 @@
 const shapes = {
-  T: [
+  'T': [
     [0, 0, 0],
     [1, 1, 1],
     [0, 1, 0],
   ],
-  S: [
+  'S': [
     [0, 0, 0],
     [0, 1, 1],
     [1, 1, 0],
   ],
-  Z: [
+  'Z': [
     [0, 0, 0],
     [1, 1, 0],
     [0, 1, 1],
   ],
-  L: [
+  'L': [
     [0, 1, 0],
     [0, 1, 0],
     [0, 1, 1],
   ],
-  Г: [
+  'Г': [
     [0, 1, 1],
     [0, 1, 0],
     [0, 1, 0],
   ],
-  Sq: [
+  '□': [
     [1, 1],
     [1, 1],
   ],
-  Line: [
+  '|': [
     [0, 1, 0, 0],
     [0, 1, 0, 0],
     [0, 1, 0, 0],
@@ -50,6 +50,7 @@ onkeydown = e => {
   if (key == 'ArrowDown' && canMove('down')) gs.pos.y++
   else if (key == 'ArrowLeft' && canMove('left')) gs.pos.x--
   else if (key == 'ArrowRight' && canMove('right')) gs.pos.x++
+  else if (key == 'ArrowUp' && canRotate()) gs.alive = rotate(gs.alive)
   else return
   render()
 }
@@ -70,13 +71,18 @@ function tick() {
   render()
 }
 
-function canMove(dirn) {
+function canMove(direction) {
   const cells = getCoords(gs.alive, gs.pos)
-  const shift = shifts[dirn]
+  const shift = shifts[direction]
   cells.forEach(cell => {
     cell.x += shift.x
     cell.y += shift.y
   })
+  return cells.every(({x, y}) => gs.inert[y]?.[x] === 0)
+}
+
+function canRotate() {
+  const cells = getCoords(rotate(gs.alive), gs.pos)
   return cells.every(({x, y}) => gs.inert[y]?.[x] === 0)
 }
 
@@ -100,6 +106,22 @@ function getRandomShape() {
   const shapesArr = Object.values(shapes)
   const i = Math.floor(Math.random() * shapesArr.length)
   return shapesArr[i]
+}
+
+function rotate(arr) {
+  const newArr = []
+
+  for (let i = 0; i < arr.length; i++) {
+    const subArr = []
+
+    for (let j = 0; j < arr[i].length; j++) {
+      subArr.push(arr[arr.length - 1 - j][i])
+    }
+
+    newArr.push(subArr)
+  }
+
+  return newArr
 }
 
 const shifts = {
