@@ -1,5 +1,43 @@
+const shapes = {
+  'T': [
+    [0, 0, 0],
+    [1, 1, 1],
+    [0, 1, 0],
+  ],
+  'S': [
+    [0, 0, 0],
+    [0, 1, 1],
+    [1, 1, 0],
+  ],
+  'Z': [
+    [0, 0, 0],
+    [1, 1, 0],
+    [0, 1, 1],
+  ],
+  'L': [
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 1, 1],
+  ],
+  'Г': [
+    [0, 1, 1],
+    [0, 1, 0],
+    [0, 1, 0],
+  ],
+  '□': [
+    [1, 1],
+    [1, 1],
+  ],
+  '|': [
+    [0, 1, 0, 0],
+    [0, 1, 0, 0],
+    [0, 1, 0, 0],
+    [0, 1, 0, 0],
+  ],
+}
+
 const gs = {
-  alive: [[1]],
+  alive: getRandomShape(),
   pos: {x: 0, y: 0},
   inert: eval(`[${`[${'0,'.repeat(10)}],`.repeat(20)}]`)
 }
@@ -12,6 +50,7 @@ onkeydown = e => {
   if (key == 'ArrowDown' && canMove('down')) gs.pos.y++
   else if (key == 'ArrowLeft' && canMove('left')) gs.pos.x--
   else if (key == 'ArrowRight' && canMove('right')) gs.pos.x++
+  else if (key == 'ArrowUp' && canRotate()) gs.alive = rotate(gs.alive)
   else return
   render()
 }
@@ -26,19 +65,24 @@ function tick() {
       ...eval(`[${`[${'0,'.repeat(10)}],`.repeat(20 - inert.length)}]`),
       ...inert
     ]
-    gs.alive = [[1]]
+    gs.alive = getRandomShape()
     gs.pos = {x: 0, y: 0}
   }
   render()
 }
 
-function canMove(dirn) {
+function canMove(direction) {
   const cells = getCoords(gs.alive, gs.pos)
-  const shift = shifts[dirn]
+  const shift = shifts[direction]
   cells.forEach(cell => {
     cell.x += shift.x
     cell.y += shift.y
   })
+  return cells.every(({x, y}) => gs.inert[y]?.[x] === 0)
+}
+
+function canRotate() {
+  const cells = getCoords(rotate(gs.alive), gs.pos)
   return cells.every(({x, y}) => gs.inert[y]?.[x] === 0)
 }
 
@@ -56,6 +100,28 @@ function render() {
 function buildBlock({x, y}) {
   const left = x*5,  top = y*5
   return `<div class="block" style="left: ${left}vh; top: ${top}vh"></div>`
+}
+
+function getRandomShape() {
+  const shapesArr = Object.values(shapes)
+  const i = Math.floor(Math.random() * shapesArr.length)
+  return shapesArr[i]
+}
+
+function rotate(arr) {
+  const newArr = []
+
+  for (let i = 0; i < arr.length; i++) {
+    const subArr = []
+
+    for (let j = 0; j < arr[i].length; j++) {
+      subArr.push(arr[arr.length - 1 - j][i])
+    }
+
+    newArr.push(subArr)
+  }
+
+  return newArr
 }
 
 const shifts = {
